@@ -1,0 +1,30 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.header {
+  color: black;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+.container-body {
+  margin-top: 10vh;
+}
+
+.inputContainer {
+  color: aqua;
+  margin: 1vh;
+}
