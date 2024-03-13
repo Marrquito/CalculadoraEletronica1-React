@@ -19,17 +19,23 @@ function App() {
   };
 
   const calculate = () => {
+	if(!vbb || !rb || !bcc || !bcc || !rc || !vcc) {
+		alert("Invalid inputs")
+
+		return
+	}
+
+
     const ib = current(Number(vbb), Number(rb));
     const ic = Number(bcc) * ib;
     const vce = Number(vcc) - Number(rc) * ic;
     const pd = power(vce, ic);
 
     const formattedResults = `
-		  Corrente Ib: ${ib.toFixed(6)}
-		  Corrente Ic: ${ic.toFixed(6)}
-		  Tensão Vce: ${vce.toFixed(6)}
-		  Potência dissipada no transistor Pd: ${pd.toFixed(6)}
-		`;
+		  Corrente Ib: ${ib}
+		  Corrente Ic: ${ic}
+		  Tensão Vce: ${vce}
+		  Potência dissipada no transistor Pd: ${pd}`;
 
     alert(formattedResults);
   };
@@ -50,51 +56,51 @@ function App() {
             placeholder="Vbb"
           />
         </div>
-      </div>
-      <div className="inputContainer">
-        <input
-          type="Number"
-          id="rb"
-          value={rb}
-          onChange={(e) => setRb(e.target.value)}
-          style={styles.input}
-          placeholder="Rb"
-        />
-      </div>
-      <div className="inputContainer">
-        <input
-          type="Number"
-          id="bcc"
-          value={bcc}
-          onChange={(e) => setBcc(e.target.value)}
-          style={styles.input}
-          placeholder="Bcc"
-        />
-      </div>
-      <div className="inputContainer">
-        <input
-          type="Number"
-          id="rc"
-          value={rc}
-          onChange={(e) => setRc(e.target.value)}
-          style={styles.input}
-          placeholder="Rc"
-        />
-      </div>
-      <div className="inputContainer">
-        <input
-          type="Number"
-          id="vcc"
-          value={vcc}
-          onChange={(e) => setVcc(e.target.value)}
-          style={styles.input}
-          placeholder="Vcc"
-        />
-      </div>
 
-      <button style={styles.button} onClick={calculate}>
-        Calcular!
-      </button>
+        <div className="inputContainer">
+          <input
+            type="Number"
+            id="rb"
+            value={rb}
+            onChange={(e) => setRb(e.target.value)}
+            style={styles.input}
+            placeholder="Rb"
+          />
+        </div>
+        <div className="inputContainer">
+          <input
+            type="Number"
+            id="bcc"
+            value={bcc}
+            onChange={(e) => setBcc(e.target.value)}
+            style={styles.input}
+            placeholder="Bcc"
+          />
+        </div>
+        <div className="inputContainer">
+          <input
+            type="Number"
+            id="rc"
+            value={rc}
+            onChange={(e) => setRc(e.target.value)}
+            style={styles.input}
+            placeholder="Rc"
+          />
+        </div>
+        <div className="inputContainer">
+          <input
+            type="Number"
+            id="vcc"
+            value={vcc}
+            onChange={(e) => setVcc(e.target.value)}
+            style={styles.input}
+            placeholder="Vcc"
+          />
+        </div>
+		<button style={styles.button} onClick={calculate}>
+			Calcular!
+		</button>
+      </div>
     </>
   );
 }
