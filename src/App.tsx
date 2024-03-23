@@ -4,34 +4,33 @@ import "./App.css";
 function App() {
   // TAB
   const [activeTab, setActiveTab] = useState("emissorComum");
+  const [emitterMode, setEmitterMode] = useState("comum");
   
   // Circuito Emissor Comum 
-  const [vbb, setVbb] = useState(Number);
-  const [rb, setRb] = useState(Number);
-  const [bcc, setBcc] = useState(Number);
-  const [rc, setRc] = useState(Number);
-  const [vcc, setVcc] = useState(Number);
+  const [vbb, setVbb] 	= useState(Number);
+  const [rb, setRb] 	= useState(Number);
+  const [bcc, setBcc] 	= useState(Number);
+  const [rc, setRc] 	= useState(Number);
+  const [vcc, setVcc] 	= useState(Number);
 
   // Circuito Emissor - FC
-  const [vbbFC, setVbbFC] = useState(Number)
-  const [reFC, setReFC] = useState(Number)
-  const [vccFC, setVccFC] = useState(Number)
-  const [rcFC, setRcFC] = useState(Number)
-  const [bccFC, setBccFC] = useState(Number)
+  const [vbbFC, setVbbFC] 	= useState(Number)
+  const [reFC, setReFC] 	= useState(Number)
+  const [vccFC, setVccFC] 	= useState(Number)
+  const [rcFC, setRcFC] 	= useState(Number)
+  const [bccFC, setBccFC] 	= useState(Number)
   
   // Divisor tensão
-  const [vccDT, setVccDT] = useState(Number)
+  const [vccDT, setVccDT] 	= useState(Number)
   // eslint-disable-next-line prefer-const
-  let [r1DT, setR1DT] = useState(Number);
+  let [r1DT, setR1DT] 		= useState(Number);
   // eslint-disable-next-line prefer-const
-  let [r2DT, setR2DT] = useState(Number);
+  let [r2DT, setR2DT] 		= useState(Number);
   // eslint-disable-next-line prefer-const
-  let [rcDT, setRcDT] = useState(Number);
+  let [rcDT, setRcDT] 		= useState(Number);
   // eslint-disable-next-line prefer-const
-  let [reDT, setReDT] = useState(Number);
+  let [reDT, setReDT] 		= useState(Number);
   const [tipoDT, setTipoDT] = useState("comum");
-  
-
 
   const current = (v: number, r: number) => {
     const vbe = 0.7;
@@ -43,6 +42,12 @@ function App() {
   };
 
   const calculateEmissorComum = () => {
+    if (emitterMode !== "comum") {
+      calculateEmissorFC();
+      
+      return;
+    }
+
     if (!vbb || !rb || !bcc || !bcc || !rc || !vcc) {
       alert("Inputs inválidos");
       return;
@@ -67,61 +72,53 @@ function App() {
       alert("Inputs inválidos");
       return;
     }
-    const Vtransistor = 0
-    const Re = reFC;
-  
-    const Icmax = vccFC / (rcFC + Re);
-    const Ie = (vbbFC - Vtransistor) / Re;
-  
-    if (Ie > Icmax) {
-      console.log("Ie > Icmax, transistor em saturação");
-      const Vce = vccFC - (Icmax * rcFC) - (Icmax * Re);
-      const Pd = Vce * Icmax;
-      console.log("Vce: ", Vce);
-      console.log("Pd: ", Pd);
-      
-      const formattedResults = `
-      Ie > Icmax, transistor em saturação
-		  Vce: ${Vce}
-		  Pd: ${Pd}`;
-      alert(formattedResults)
-    } else if (Ie === Icmax) {
-      console.log("Ie = Icmax, transistor em saturação");
-      const Vce = vccFC - (Ie * rcFC) - (Ie * Re);
-      const Pd = Vce * Ie;
-      console.log("Vce: ", Vce);
-      console.log("Pd: ", Pd);
+    const Vtransistor     = 0
+    const Re              = reFC;
+    const Icmax           = vccFC / (rcFC + Re);
+    const Ie              = (vbbFC - Vtransistor) / Re;
+    
+    let formattedResults  = ""
 
-      const formattedResults = `
+    if (Ie > Icmax) {
+     const Vce = vccFC - (Icmax * rcFC) - (Icmax * Re);
+     const Pd  = Vce * Icmax;
+
+      formattedResults = `
+        Ie > Icmax, transistor em saturação
+		    Vce: ${Vce}
+		    Pd: ${Pd}`;
+
+    } else if (Ie === Icmax) {
+      const Vce = vccFC - (Ie * rcFC) - (Ie * Re);
+      const Pd  = Vce * Ie;
+      
+      formattedResults = `
         Ie = Icmax, transistor em saturação
         Vce: ${Vce}
         Pd: ${Pd}`;
 
-      alert(formattedResults)
     } else {
-      console.log("Transistor em estado ativo");
       const Vce = vccFC - (Ie * rcFC) - (Ie * Re);
-      const Pd = Vce * Ie;
-      console.log("Vce: ", Vce);
-      console.log("Pd: ", Pd);
-      const formattedResults = `
+      const Pd  = Vce * Ie;
+      
+      formattedResults = `
         Transistor em estado ativo
         Vce: ${Vce}
         Pd: ${Pd}
       `
-      alert(formattedResults)
     }
+
+    alert(formattedResults)
   };
-  
 
   const calculateDivisorTensao = () => {
     if (!vccDT || !r1DT || !r2DT || !rcDT || !reDT) {
       alert("Inputs inválidos");
       return;
     }
-
-    const Vtransistor = 0;
-  
+	
+	let result 			= ""
+    const Vtransistor 	= 0;
 
     const dicionario = {
       estado: "",
@@ -135,37 +132,41 @@ function App() {
     };
 
     if (tipoDT === "p") {
-      console.log("P")
       let aux = r1DT;
-      r1DT = r2DT
-      r2DT = aux
-      aux = rcDT
-      rcDT = reDT
-      reDT = aux
+
+      r1DT	= r2DT
+      r2DT 	= aux
+      aux 	= rcDT
+      rcDT 	= reDT
+      reDT 	= aux
     }
 
-    dicionario.Vb = (vccDT * r2DT) / (r1DT + r2DT);
-    dicionario.Vbe = dicionario.Vb - Vtransistor;
-    dicionario.Ie = dicionario.Vbe / rcDT;
-    let result = ""
+    dicionario.Vb 	= (vccDT * r2DT) / (r1DT + r2DT);
+    dicionario.Vbe 	= dicionario.Vb - Vtransistor;
+    dicionario.Ie 	= dicionario.Vbe / rcDT;
+
     if (dicionario.Ie > dicionario.Icmax) {
       result = "Ie > Icmax, transistor em saturação"
-      console.log("Ie > Icmax, transistor em saturação");
-      dicionario.estado = "acima saturacao";
-      dicionario.Vce = vccDT - dicionario.Icmax * rcDT;
-      dicionario.Pd = dicionario.Vce * dicionario.Icmax;
+      
+      dicionario.estado = "acima saturação";
+      dicionario.Vce    = vccDT - dicionario.Icmax * rcDT;
+      dicionario.Pd     = dicionario.Vce * dicionario.Icmax;
+      
     } else if (dicionario.Ie === dicionario.Icmax) {
-      result = "Ie = Icmax, transistor em saturacao"
-      console.log("Ie = Icmax, transistor em saturacao");
+      result = "Ie = Icmax, transistor em saturação"
+
       dicionario.estado = "saturado";
-      dicionario.Vce = vccDT - dicionario.Ie * rcDT - dicionario.Ie * reDT;
-      dicionario.Pd = dicionario.Vce * dicionario.Ie;
+      dicionario.Vce    = vccDT - dicionario.Ie * rcDT - dicionario.Ie * reDT;
+      dicionario.Pd     = dicionario.Vce * dicionario.Ie;
     } else {
       result = "ativo"
+
       dicionario.estado = "ativo";
-      dicionario.Vce = vccDT - dicionario.Ie * rcDT - dicionario.Ie * reDT;
-      dicionario.Pd = dicionario.Vce * dicionario.Ie;
+      dicionario.Vce    = vccDT - dicionario.Ie * rcDT - dicionario.Ie * reDT;
+      dicionario.Pd     = dicionario.Vce * dicionario.Ie;
     }
+    
+    console.log(result);
 
     alert(result + JSON.stringify(dicionario))
   }
@@ -181,13 +182,7 @@ function App() {
             className={activeTab === "emissorComum" ? "active" : ""}
             onClick={() => setActiveTab("emissorComum")}
           >
-            Calcular Emissor Comum
-          </button>
-          <button
-            className={activeTab === "emissorComumFC" ? "active" : ""}
-            onClick={() => setActiveTab("emissorComumFC")}
-          >
-            Calcular Emissor - Fonte de Corrente
+            Calcular Emissor
           </button>
           <button
             className={activeTab === "divisorTensao" ? "active" : ""}
@@ -199,110 +194,119 @@ function App() {
         <div className="container-body">
           {activeTab === "emissorComum" && (
             <>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="vbb"
-                  onChange={(e) => setVbb(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Vbb"
-                />
+              {emitterMode === "comum" && (
+                <>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="vbb"
+                      onChange={(e) => setVbb(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Vbb"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="rb"
+                      onChange={(e) => setRb(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Rb"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="bcc"
+                      onChange={(e) => setBcc(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Bcc"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="rc"
+                      onChange={(e) => setRc(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Rc"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="vcc"
+                      onChange={(e) => setVcc(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Vcc"
+                    />
+                  </div>
+                </>
+              )}
+              {emitterMode === "comumFC" && (
+                <>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="vbbFC"
+                      onChange={(e) => setVbbFC(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Vbb"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="Re"
+                      onChange={(e) => setReFC(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Re"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="VccFC"
+                      onChange={(e) => setVccFC(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Vcc"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="RcFC"
+                      onChange={(e) => setRcFC(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Rc"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <input
+                      type="Number"
+                      id="BccFC"
+                      onChange={(e) => setBccFC(e.target.valueAsNumber)}
+                      style={styles.input}
+                      placeholder="Bcc"
+                    />
+                  </div>  
+                </>
+              )}
+              
+              <div>
+                <select
+                   value={emitterMode}
+                   onChange={(e) => setEmitterMode(e.target.value)}
+                   style={styles.input}
+                >
+                  <option value="comum">Emissor Comum</option>
+                  <option value="comumFC">Emissor - Fonte de Corrente</option>
+                </select>
               </div>
 
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="rb"
-                  onChange={(e) => setRb(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Rb"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="bcc"
-                  onChange={(e) => setBcc(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Bcc"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="rc"
-                  onChange={(e) => setRc(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Rc"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="vcc"
-                  onChange={(e) => setVcc(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Vcc"
-                />
-              </div>
               <button style={styles.button} onClick={calculateEmissorComum}>
                 Calcular!
               </button>
-            </>
-          )}
-
-          {activeTab === "emissorComumFC" && (
-            <>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="vbbFC"
-                  onChange={(e) => setVbbFC(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Vbb"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="Re"
-                  onChange={(e) => setReFC(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Re"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="VccFC"
-                  onChange={(e) => setVccFC(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Vcc"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="RcFC"
-                  onChange={(e) => setRcFC(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Rc"
-                />
-              </div>
-              <div className="inputContainer">
-                <input
-                  type="Number"
-                  id="BccFC"
-                  onChange={(e) => setBccFC(e.target.valueAsNumber)}
-                  style={styles.input}
-                  placeholder="Bcc"
-                />
-              </div>
-
-              <button style={styles.button} onClick={calculateEmissorFC}>
-                Calcular!
-              </button>
-
             </>
           )}
 
